@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terms &amp; Agreements – Vortex Markets</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--red:#e5261c;--red-dark:#c01a12;--black:#0d0d0d;--dark:#1a1a1a;--white:#fff;--off:#f5f5f7;--border:#e2e2e2;--muted:#6b7280;--green:#00923f;--blue:#0066cc;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Figtree',sans-serif;background:var(--white);color:var(--dark);overflow-x:hidden;}
+
+/* ===== PRELOADER ===== */
+#vx-preloader{position:fixed;inset:0;z-index:99999;background:#0d0d0d;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .7s ease,visibility .7s ease;}
+#vx-preloader.hide{opacity:0;visibility:hidden;pointer-events:none;}
+.vx-pl-canvas{position:absolute;inset:0;width:100%;height:100%;}
+.vx-pl-center{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:24px;}
+.vx-pl-logo{font-size:2.8rem;font-weight:900;color:#fff;letter-spacing:-.5px;opacity:0;animation:plLogoPop .6s .3s cubic-bezier(.22,1,.36,1) forwards;}
+.vx-pl-logo span{color:var(--red);}
+.vx-pl-bar{width:180px;height:3px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden;opacity:0;animation:plFadeIn .5s .7s ease forwards;}
+.vx-pl-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--red),#ff6b5b);border-radius:3px;animation:plBarFill 1.8s .8s cubic-bezier(.4,0,.2,1) forwards;}
+.vx-pl-tagline{font-size:12px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;font-weight:500;opacity:0;animation:plFadeIn .5s .9s ease forwards;}
+@keyframes plLogoPop{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes plFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes plBarFill{0%{width:0%}60%{width:80%}100%{width:100%}}
+
+/* ===== MINI TOP BAR ===== */
+.mini-topbar{background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 44px;height:60px;position:sticky;top:0;z-index:1000;box-shadow:0 2px 16px rgba(0,0,0,.07);}
+.vx-logo{font-size:1.5rem;font-weight:900;color:var(--red);letter-spacing:-.5px;text-decoration:none;line-height:1;}
+.home-btn{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:13.5px;font-weight:600;text-decoration:none;padding:8px 16px;border-radius:6px;border:1.5px solid var(--border);transition:all .2s;}
+.home-btn:hover{color:var(--red);border-color:var(--red);background:rgba(229,38,28,.04);}
+.home-btn i{font-size:11px;}
+
+/* PAGE HERO */
+.page-hero{background:linear-gradient(135deg,#0a0a1a 0%,#0d1535 50%,#0a1030 100%);padding:80px 44px 64px;position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 50% 100%,rgba(0,102,204,.2) 0%,transparent 65%);}
+.hero-inner{max-width:900px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:40px;flex-wrap:wrap;position:relative;z-index:1;}
+.page-hero-label{display:inline-flex;align-items:center;gap:8px;background:rgba(0,102,204,.15);border:1px solid rgba(0,102,204,.3);color:rgba(100,160,255,.9);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:6px 16px;border-radius:100px;margin-bottom:20px;}
+.page-hero h1{font-size:clamp(1.8rem,4vw,3.2rem);font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:12px;}
+.hero-meta{font-size:13px;color:rgba(255,255,255,.45);display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.hero-meta span{display:flex;align-items:center;gap:6px;}
+.hero-toc{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:20px 24px;min-width:220px;flex-shrink:0;}
+.hero-toc h4{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:14px;}
+.hero-toc ol{list-style:none;display:flex;flex-direction:column;gap:9px;counter-reset:toc;}
+.hero-toc ol li{counter-increment:toc;display:flex;align-items:center;gap:8px;}
+.hero-toc ol li::before{content:counter(toc);width:20px;height:20px;border-radius:50%;background:rgba(0,102,204,.2);color:rgba(100,160,255,.9);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hero-toc ol li a{font-size:12.5px;color:rgba(255,255,255,.6);text-decoration:none;transition:color .2s;}
+.hero-toc ol li a:hover{color:#fff;}
+
+/* AGREEMENTS STRIP */
+.agreements-strip{background:var(--off);border-bottom:1px solid var(--border);padding:32px 44px;}
+.agreements-inner{max-width:860px;margin:0 auto;}
+.agreements-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.agreement-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:20px 18px;display:flex;align-items:center;gap:14px;transition:all .2s;}
+.agreement-card:hover{border-color:rgba(0,102,204,.3);box-shadow:0 6px 20px rgba(0,0,0,.07);}
+.ac-icon{width:42px;height:42px;border-radius:10px;background:rgba(0,102,204,.1);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.ac-title{font-size:13.5px;font-weight:800;color:var(--dark);margin-bottom:2px;}
+.ac-sub{font-size:12px;color:var(--muted);}
+
+/* LEGAL CONTENT */
+.legal-wrap{max-width:860px;margin:0 auto;padding:64px 44px 80px;}
+.legal-section{margin-bottom:52px;}
+.legal-section:last-child{margin-bottom:0;}
+.legal-section-num{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:8px;}
+.legal-section h2{font-size:1.4rem;font-weight:800;color:var(--dark);letter-spacing:-.4px;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid var(--off);}
+.legal-section p{font-size:14.5px;color:#444;line-height:1.85;margin-bottom:16px;}
+.legal-section p:last-child{margin-bottom:0;}
+.legal-section ul,.legal-section ol{padding-left:22px;margin-bottom:16px;}
+.legal-section ul li,.legal-section ol li{font-size:14.5px;color:#444;line-height:1.85;margin-bottom:8px;}
+.legal-highlight{background:#f0f5ff;border-left:4px solid var(--blue);border-radius:0 10px 10px 0;padding:16px 20px;margin:22px 0;font-size:14px;color:var(--dark);line-height:1.7;}
+.legal-highlight strong{color:var(--blue);}
+.legal-highlight--red{background:#fff8f7;border-left-color:var(--red);}
+.legal-highlight--red strong{color:var(--red);}
+.fee-table{width:100%;border-collapse:collapse;margin:22px 0;border-radius:10px;overflow:hidden;}
+.fee-table th{background:#0d1535;color:rgba(255,255,255,.85);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:13px 16px;text-align:left;}
+.fee-table td{padding:12px 16px;font-size:13.5px;color:#444;border-bottom:1px solid var(--border);vertical-align:middle;}
+.fee-table tr:last-child td{border-bottom:none;}
+.fee-table tr:hover td{background:#fafafa;}
+.tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.tag--green{background:rgba(0,146,63,.1);color:var(--green);}
+.tag--blue{background:rgba(0,102,204,.1);color:var(--blue);}
+.tag--red{background:rgba(229,38,28,.1);color:var(--red);}
+
+/* FOOTER */
+.site-footer{background:#111;color:rgba(255,255,255,.7);}
+.footer-top{max-width:1100px;margin:0 auto;padding:52px 44px 44px;display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;}
+.footer-logo{font-size:1.4rem;font-weight:900;color:#fff;letter-spacing:-.5px;margin-bottom:14px;display:block;}
+.footer-tagline{font-size:13px;color:rgba(255,255,255,.4);line-height:1.65;max-width:240px;margin-bottom:20px;}
+.footer-contact{font-size:12.5px;color:rgba(255,255,255,.45);line-height:1.9;}
+.footer-contact a{color:rgba(255,255,255,.55);text-decoration:none;}
+.footer-contact a:hover{color:#fff;}
+.footer-col-title{font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:1px;margin-bottom:18px;}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:11px;}
+.footer-links li a{color:rgba(255,255,255,.5);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s;}
+.footer-links li a:hover{color:#fff;}
+.footer-divider{border:none;border-top:1px solid rgba(255,255,255,.08);margin:0 44px;}
+.footer-bottom{max-width:1100px;margin:0 auto;padding:18px 44px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:11.5px;color:rgba(255,255,255,.3);}
+.footer-bottom-links{display:flex;gap:20px;flex-wrap:wrap;}
+.footer-bottom-links a{font-size:11.5px;color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s;}
+.footer-bottom-links a:hover{color:#fff;}
+.footer-legal-note{background:#0d0d0d;padding:22px 44px;text-align:center;}
+.footer-legal-note p{font-size:11px;color:rgba(255,255,255,.25);line-height:1.7;max-width:900px;margin:0 auto;}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1100px){
+  .mini-topbar{padding:0 28px;}
+  .page-hero{padding:64px 28px 52px;}
+  .agreements-strip{padding:26px 28px;}
+  .legal-wrap{padding:52px 28px 64px;}
+  .footer-top{padding:44px 28px 36px;gap:32px;}
+  .footer-divider{margin:0 28px;}
+  .footer-bottom{padding:16px 28px 22px;}
+  .footer-legal-note{padding:18px 28px;}
+}
+@media(max-width:900px){
+  .mini-topbar{padding:0 20px;height:54px;}
+  .vx-logo{font-size:1.3rem;}
+  .home-btn{font-size:13px;padding:7px 13px;}
+  .page-hero{padding:52px 20px 44px;}
+  .hero-toc{display:none;}
+  .agreements-strip{padding:22px 20px;}
+  .agreements-grid{grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .legal-wrap{padding:44px 20px 56px;}
+  .footer-top{grid-template-columns:1fr 1fr;gap:24px;padding:36px 20px 28px;}
+  .footer-divider{margin:0 20px;}
+  .footer-bottom{padding:14px 20px 20px;}
+  .footer-legal-note{padding:16px 20px;}
+}
+@media(max-width:640px){
+  .mini-topbar{height:50px;padding:0 14px;}
+  .home-btn{font-size:12.5px;padding:6px 11px;}
+  .page-hero{padding:40px 14px 36px;}
+  .agreements-grid{grid-template-columns:1fr;gap:10px;}
+  .agreement-card{padding:16px 14px;}
+  .legal-wrap{padding:36px 14px 48px;}
+  .legal-section h2{font-size:1.25rem;}
+  .legal-section p,.legal-section ul li,.legal-section ol li{font-size:14px;}
+  .fee-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .footer-top{grid-template-columns:1fr;gap:20px;padding:28px 14px 22px;}
+  .footer-divider{margin:0 14px;}
+  .footer-bottom{padding:12px 14px 18px;flex-direction:column;align-items:flex-start;gap:8px;}
+  .footer-bottom-links{flex-wrap:wrap;gap:10px;}
+  .footer-legal-note{padding:14px 14px;}
+}
+@media(max-width:480px){
+  .mini-topbar{height:48px;padding:0 12px;}
+  .home-btn span{display:none;}
+  .page-hero{padding:32px 12px 28px;}
+  .agreements-grid{grid-template-columns:1fr 1fr;}
+  .legal-wrap{padding:28px 12px 40px;}
+  .hero-meta{gap:10px;}
+}
+@media(max-width:380px){
+  .vx-logo{font-size:1.1rem;}
+  .page-hero{padding:26px 10px 24px;}
+  .agreements-grid{grid-template-columns:1fr;}
+  .legal-wrap{padding:22px 10px 32px;}
+  .footer-top{padding:20px 10px 16px;}
+  .footer-legal-note{padding:10px 10px;}
+}
+</style>
+</head>
+<body>
+
+<!-- PRELOADER -->
+<div id="vx-preloader">
+  <canvas class="vx-pl-canvas" id="vxPlCanvas"></canvas>
+  <div class="vx-pl-center">
+    <div class="vx-pl-logo"><span>V</span>ortex</div>
+    <div class="vx-pl-bar"><div class="vx-pl-bar-fill"></div></div>
+    <div class="vx-pl-tagline">World Leader in Online Trading</div>
+  </div>
+</div>
+
+<!-- MINI TOP BAR -->
+<div class="mini-topbar">
+  <a href="index.html" class="vx-logo">Vortex</a>
+  <a href="index.html" class="home-btn"><i class="fa-solid fa-arrow-left"></i><span>Back to Home</span></a>
+</div>
+
+<div class="page-hero">
+  <div class="hero-inner">
+    <div>
+      <div class="page-hero-label"><i class="fa-solid fa-handshake"></i> Legal</div>
+      <h1>Terms &amp; Agreements</h1>
+      <div class="hero-meta">
+        <span><i class="fa-regular fa-calendar"></i> Effective: 1 March 2026</span>
+        <span><i class="fa-solid fa-shield-halved"></i> FCA Regulated</span>
+      </div>
+    </div>
+    <div class="hero-toc">
+      <h4>Contents</h4>
+      <ol>
+        <li><a href="#a1">Client Agreement</a></li>
+        <li><a href="#a2">Risk Acknowledgement</a></li>
+        <li><a href="#a3">Fee Schedule</a></li>
+        <li><a href="#a4">Order Execution</a></li>
+        <li><a href="#a5">Margin &amp; Leverage</a></li>
+        <li><a href="#a6">Conflicts of Interest</a></li>
+        <li><a href="#a7">Amendments</a></li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="agreements-strip">
+  <div class="agreements-inner">
+    <div class="agreements-grid">
+      <div class="agreement-card"><div class="ac-icon"><i class="fa-solid fa-file-contract"></i></div><div><div class="ac-title">Client Agreement</div><div class="ac-sub">Your main trading agreement</div></div></div>
+      <div class="agreement-card"><div class="ac-icon"><i class="fa-solid fa-triangle-exclamation"></i></div><div><div class="ac-title">Risk Disclosure</div><div class="ac-sub">Understanding trading risks</div></div></div>
+      <div class="agreement-card"><div class="ac-icon"><i class="fa-solid fa-coins"></i></div><div><div class="ac-title">Fee Schedule</div><div class="ac-sub">Full pricing breakdown</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="legal-wrap">
+  <div class="legal-highlight"><strong>Important:</strong> These Terms and Agreements govern the contractual relationship between you and Vortex Markets Ltd regarding your trading account and use of our services. Please read this document carefully. By opening an account, you confirm you have read and accept all terms herein.</div>
+
+  <div class="legal-section" id="a1">
+    <div class="legal-section-num">Agreement 01</div>
+    <h2>Client Agreement</h2>
+    <p>This Client Agreement ("Agreement") is entered into between you ("Client") and Vortex Markets Ltd ("Vortex", "we", "us"), a company incorporated in England and Wales (Company No. 04514361) and authorised and regulated by the Financial Conduct Authority (FCA Reference No. 195355).</p>
+    <p>This Agreement sets out the terms on which Vortex will provide investment and ancillary services to you and governs all transactions between us. It should be read in conjunction with our Terms of Use, Privacy Policy, Risk Disclosure Notice and any other documents we provide to you.</p>
+    <ul>
+      <li>This Agreement is effective from the date your account is approved and activated.</li>
+      <li>You must be 18 years or older and legally capable of entering into binding contracts.</li>
+      <li>You confirm that you are trading for your own account and not on behalf of a third party without our prior written consent.</li>
+      <li>You accept that your classification as a Retail Client, Professional Client or Eligible Counterparty will affect the level of regulatory protections available to you.</li>
+    </ul>
+  </div>
+
+  <div class="legal-section" id="a2">
+    <div class="legal-section-num">Agreement 02</div>
+    <h2>Risk Acknowledgement</h2>
+    <div class="legal-highlight legal-highlight--red"><strong>Risk Warning:</strong> Trading CFDs, forex and other leveraged products carries a high level of risk to your capital. You can lose more than your initial deposit. These products may not be suitable for all investors. Ensure you fully understand the risks and seek independent advice if necessary.</div>
+    <p>By opening an account with Vortex, you acknowledge and accept the following risks:</p>
+    <ul>
+      <li><strong>Market Risk:</strong> The value of investments can fall as well as rise and past performance is not a reliable indicator of future results.</li>
+      <li><strong>Leverage Risk:</strong> Leveraged products amplify both gains and losses. A small market movement may result in a proportionally larger loss than your initial investment.</li>
+      <li><strong>Liquidity Risk:</strong> In certain market conditions, it may be difficult or impossible to execute orders at the desired price.</li>
+      <li><strong>Technology Risk:</strong> Electronic trading systems are subject to technical failures, connectivity issues and delays outside our control.</li>
+      <li><strong>Currency Risk:</strong> If your account is denominated in a currency different to the underlying instrument, exchange rate fluctuations will affect your profit and loss.</li>
+    </ul>
+  </div>
+
+  <div class="legal-section" id="a3">
+    <div class="legal-section-num">Agreement 03</div>
+    <h2>Fee Schedule</h2>
+    <p>Vortex charges are primarily incorporated within the spread — the difference between the buy and sell price of an instrument. Additional charges may apply as set out below:</p>
+    <table class="fee-table">
+      <tr><th>Service</th><th>Standard Account</th><th>Pro Account</th><th>Type</th></tr>
+      <tr><td>Forex Spreads (major pairs)</td><td>From 0.8 pts</td><td>From 0.2 pts</td><td><span class="tag tag--green">Spread</span></td></tr>
+      <tr><td>Index CFDs</td><td>From 0.6 pts</td><td>From 0.2 pts</td><td><span class="tag tag--green">Spread</span></td></tr>
+      <tr><td>Share CFDs</td><td>0.10% commission</td><td>0.05% commission</td><td><span class="tag tag--blue">Commission</span></td></tr>
+      <tr><td>Overnight Funding</td><td>LIBOR ± 2.5%</td><td>LIBOR ± 1.5%</td><td><span class="tag tag--blue">Daily</span></td></tr>
+      <tr><td>Inactivity Fee</td><td>£12/month after 2 yrs</td><td>Waived</td><td><span class="tag tag--red">Conditional</span></td></tr>
+      <tr><td>Deposits &amp; Withdrawals</td><td>Free (selected methods)</td><td>Free (all methods)</td><td><span class="tag tag--green">Free</span></td></tr>
+      <tr><td>Guaranteed Stop Order</td><td>Premium applicable</td><td>Premium applicable</td><td><span class="tag tag--blue">Premium</span></td></tr>
+    </table>
+    <p>All fees are subject to change. We will provide at least 10 business days' notice of any material changes to our fee schedule.</p>
+  </div>
+
+  <div class="legal-section" id="a4">
+    <div class="legal-section-num">Agreement 04</div>
+    <h2>Order Execution Policy</h2>
+    <p>Vortex is required under FCA rules to take all sufficient steps to obtain the best possible result for clients when executing orders. Our Order Execution Policy sets out how we achieve this obligation.</p>
+    <p>We execute orders on a principal basis, meaning we act as the counterparty to all trades. Execution factors we consider include: price, costs, speed, likelihood of execution, order size and nature, and any other relevant consideration. For retail clients, the best possible result is generally determined by the total consideration representing the price of the financial instrument and costs relating to execution.</p>
+    <div class="legal-highlight"><strong>Note:</strong> By accepting this Agreement, you provide your express consent to our Order Execution Policy. A full copy is available on request and via our website.</div>
+  </div>
+
+  <div class="legal-section" id="a5">
+    <div class="legal-section-num">Agreement 05</div>
+    <h2>Margin &amp; Leverage</h2>
+    <p>Trading on margin allows you to open positions with a value greater than the funds in your account. The margin requirement represents the minimum deposit needed to open and maintain a position.</p>
+    <p>Retail clients benefit from negative balance protection — you cannot lose more than the total funds in your account. Leverage for retail clients is limited in accordance with FCA regulations:</p>
+    <ul>
+      <li>Major forex pairs: Maximum 30:1</li>
+      <li>Non-major forex, major indices, gold: Maximum 20:1</li>
+      <li>Commodities (excl. gold), non-major equity indices: Maximum 10:1</li>
+      <li>Individual equities: Maximum 5:1</li>
+      <li>Cryptocurrencies: Maximum 2:1</li>
+    </ul>
+    <p>If your account equity falls below the required margin level, we may issue a margin call and/or close positions automatically to prevent further losses.</p>
+  </div>
+
+  <div class="legal-section" id="a6">
+    <div class="legal-section-num">Agreement 06</div>
+    <h2>Conflicts of Interest</h2>
+    <p>As a market maker, Vortex acts as counterparty to your trades. This creates an inherent potential conflict of interest. We manage this through organisational and administrative arrangements, including separation of client-facing and trading functions.</p>
+    <p>We maintain a Conflicts of Interest Policy that identifies, prevents and manages conflicts. A summary is available on our website. Where conflicts cannot be adequately managed, we will disclose them to you before providing the relevant service.</p>
+  </div>
+
+  <div class="legal-section" id="a7">
+    <div class="legal-section-num">Agreement 07</div>
+    <h2>Amendments to this Agreement</h2>
+    <p>Vortex reserves the right to amend this Agreement at any time. For changes that are material and adverse to your interests, we will provide at least 10 business days' written notice by email before the change takes effect.</p>
+    <p>For non-material changes or changes required by applicable law or regulation, we may implement changes with immediate effect and will notify you as soon as reasonably practicable. Your continued use of our services after the effective date of any amendment constitutes your acceptance of the revised Agreement.</p>
+    <p>If you do not accept a proposed amendment, you have the right to close your account before the change takes effect without penalty. To close your account, please contact us at <strong><a href="mailto:support@vortexmarkets.com">support@vortexmarkets.com</a></strong>.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div>
+      <span class="footer-logo">Vortex</span>
+      <p class="footer-tagline">World-class trading infrastructure trusted by 400,000+ traders.</p>
+      <div class="footer-contact">
+        <div><i class="fa-solid fa-phone" style="margin-right:6px;color:var(--red)"></i>+1 888 721 0410</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.3);margin-bottom:8px">Mon–Fri 8:30 AM–4:30 PM ET</div>
+        <a href="mailto:support@vortexmarkets.com">support@vortexmarkets.com</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="about.html">About us</a></li>
+        <li><a href="index.html">Home</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <ul class="footer-links">
+        <li><a href="terms.html">Terms of Use</a></li>
+        <li><a href="terms-agreement.html">Terms &amp; Agreements</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <hr class="footer-divider">
+  <div class="footer-bottom">
+    <p>&copy; 2026 Vortex Technologies Inc. All Rights Reserved.</p>
+    <div class="footer-bottom-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Use</a>
+    </div>
+  </div>
+  <div class="footer-legal-note">
+    <p>All investing involves risk. Vortex Markets Ltd is authorised and regulated by the FCA. Client funds are held in segregated accounts. Past performance is not indicative of future results.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const canvas=document.getElementById('vxPlCanvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,raf;
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  class Particle{constructor(){this.reset(true);}reset(r){this.angle=r?Math.random()*Math.PI*2:0;this.radius=r?Math.random()*Math.min(W,H)*.38:0;this.speed=(.0008+Math.random()*.0022)*(Math.random()<.5?1:-1);this.radiusSpeed=(Math.random()-.5)*.4;this.size=.8+Math.random()*2.2;this.alpha=.15+Math.random()*.6;this.hue=Math.random()<.6?0:15;this.sat=70+Math.random()*30;this.life=0;this.maxLife=120+Math.random()*180;}update(){this.angle+=this.speed;this.radius+=this.radiusSpeed;if(this.radius<0)this.radius=0;if(this.radius>Math.min(W,H)*.45)this.radiusSpeed*=-1;this.life++;if(this.life>this.maxLife)this.reset(true);}draw(){const x=W/2+Math.cos(this.angle)*this.radius,y=H/2+Math.sin(this.angle)*this.radius,fade=this.life<20?this.life/20:this.life>this.maxLife-20?(this.maxLife-this.life)/20:1;ctx.beginPath();ctx.arc(x,y,this.size,0,Math.PI*2);ctx.fillStyle=`hsla(${this.hue},${this.sat}%,55%,${this.alpha*fade})`;ctx.fill();}}
+  class SpiralLine{constructor(i){this.i=i;this.offset=(i/6)*Math.PI*2;this.t=0;}draw(){this.t+=.006;ctx.beginPath();const maxR=Math.min(W,H)*.35;for(let a=0;a<Math.PI*6;a+=.05){const r=(a/(Math.PI*6))*maxR,x=W/2+Math.cos(a+this.offset+this.t)*r,y=H/2+Math.sin(a+this.offset+this.t)*r;a===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.strokeStyle=`hsla(${this.i*12},70%,55%,0.07)`;ctx.lineWidth=1;ctx.stroke();}}
+  const particles=Array.from({length:120},()=>new Particle());
+  const spirals=Array.from({length:6},(_,i)=>new SpiralLine(i));
+  function loop(){ctx.fillStyle='rgba(13,13,13,0.18)';ctx.fillRect(0,0,W,H);spirals.forEach(s=>s.draw());particles.forEach(p=>{p.update();p.draw();});raf=requestAnimationFrame(loop);}
+  loop();
+  setTimeout(()=>{const pl=document.getElementById('vx-preloader');pl.classList.add('hide');cancelAnimationFrame(raf);setTimeout(()=>pl.remove(),800);},2400);
+})();
+</script>
+
+<!-- Begin of Chaport Live Chat code -->
+<script type="text/javascript">
+(function(w,d,v3){
+w.chaportConfig = {
+  appId : '69c36ae0fd99896b215a9a73',
+};
+
+if(w.chaport)return;v3=w.chaport={};v3._q=[];v3._l={};v3.q=function(){v3._q.push(arguments)};v3.on=function(e,fn){if(!v3._l[e])v3._l[e]=[];v3._l[e].push(fn)};var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://app.chaport.com/javascripts/insert.js';var ss=d.getElementsByTagName('script')[0];ss.parentNode.insertBefore(s,ss)})(window, document);
+</script>
+<!-- End of Chaport Live Chat code -->
+
+</body>
+</html>
