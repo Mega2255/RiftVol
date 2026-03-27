@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-<title>Dashboard – Vortex Markets</title>
+<title>Dashboard – Riftvol Markets</title>
 <link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;600;700;800;900&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getDatabase,ref,get,push,update,onValue}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-const cfg={apiKey:"AIzaSyB_U4P9bk4ePgIwpM1hVJwOL8F1Go032VA",authDomain:"vortex-broker.firebaseapp.com",databaseURL:"https://vortex-broker-default-rtdb.firebaseio.com",projectId:"vortex-broker",storageBucket:"vortex-broker.firebasestorage.app",messagingSenderId:"485590909637",appId:"1:485590909637:web:b5bd6a98ffbbad1fc7e6"};
+const cfg={apiKey:"AIzaSyB_U4P9bk4ePgIwpM1hVJwOL8F1Go032VA",authDomain:"Riftvol-broker.firebaseapp.com",databaseURL:"https://Riftvol-broker-default-rtdb.firebaseio.com",projectId:"Riftvol-broker",storageBucket:"Riftvol-broker.firebasestorage.app",messagingSenderId:"485590909637",appId:"1:485590909637:web:b5bd6a98ffbbad1fc7e6"};
 const app=initializeApp(cfg),db=getDatabase(app);
 window.FB={db,ref,get,push,update,onValue};
 </script>
@@ -223,7 +223,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
 <!-- PRELOADER -->
 <div id="preloader">
   <div class="pl-spin"></div>
-  <div class="pl-logo"><b>V</b>ortex</div>
+  <div class="pl-logo"><b>Rift</b>Vol</div>
   <div class="pl-sub">Loading Dashboard</div>
 </div>
 
@@ -232,7 +232,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sb">
-  <div class="sb-logo"><a href="index.html"><b style="color:var(--red)">V</b>ortex Markets</a></div>
+  <div class="sb-logo"><a href="index.html"><b style="color:var(--red)">Rift</b>Vol Markets</a></div>
   <div class="sb-user">
     <div class="ava" style="width:36px;height:36px;font-size:13px;" id="sbAva">V</div>
     <div style="min-width:0;flex:1;">
@@ -250,7 +250,6 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
     <a class="ni" data-s="withdraw" onclick="go('withdraw')"><i class="fa-solid fa-arrow-up-from-bracket"></i>Withdraw</a>
     <div class="nav-lbl">Account</div>
     <a class="ni" data-s="profile"  onclick="go('profile')"><i class="fa-solid fa-user"></i>My Profile</a>
-    <a class="ni" data-s="verify"   onclick="go('verify')"><i class="fa-solid fa-id-card"></i>Verification</a>
     <a class="ni" data-s="security" onclick="go('security')"><i class="fa-solid fa-shield-halved"></i>Security</a>
     <a class="ni" data-s="notifications" onclick="go('notifications')"><i class="fa-solid fa-bell"></i>Notifications</a>
     <a class="ni" data-s="settings" onclick="go('settings')"><i class="fa-solid fa-sliders"></i>Settings</a>
@@ -272,7 +271,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
   <!-- Mobile top bar -->
   <div class="mob-bar">
     <button onclick="openSB()" style="width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.05);border:none;cursor:pointer;color:var(--muted);font-size:15px;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-bars"></i></button>
-    <a href="index.html" style="font-family:'Cabinet Grotesk',sans-serif;font-size:1.1rem;font-weight:900;color:var(--red);text-decoration:none;"><b>V</b>ortex</a>
+    <a href="index.html" style="font-family:'Cabinet Grotesk',sans-serif;font-size:1.1rem;font-weight:900;color:var(--red);text-decoration:none;"><b>Rift</b>Vol</a>
     <div class="ava" id="mobAva" style="width:34px;height:34px;font-size:12px;">V</div>
   </div>
 
@@ -399,14 +398,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
         </div>
       </div>
 
-      <!-- KYC BANNER -->
-      <div class="card" style="padding:16px 20px;border-color:rgba(245,158,11,.22);background:rgba(245,158,11,.04);">
-        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
-          <div style="width:38px;height:38px;border-radius:11px;background:var(--adim);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa-solid fa-id-card" style="color:var(--amber);"></i></div>
-          <div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:13.5px;margin-bottom:2px;">Complete Identity Verification</div><div style="font-size:12px;color:rgba(255,255,255,.4);">Upload your ID to unlock full trading access and higher limits.</div></div>
-          <button class="btn btn-sm" onclick="go('verify')" style="background:linear-gradient(135deg,var(--amber),#d97706);color:#fff;font-family:'Cabinet Grotesk';font-weight:700;border:none;border-radius:9px;padding:8px 16px;cursor:pointer;flex-shrink:0;white-space:nowrap;"><i class="fa-solid fa-upload" style="font-size:11px;"></i>Verify Now</button>
-        </div>
-      </div>
+
     </div>
 
     <!-- ======== MARKETS ======== -->
@@ -639,24 +631,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
       </div>
     </div>
 
-    <!-- ======== VERIFY ======== -->
-    <div class="sec" id="sec-verify">
-      <div style="margin-bottom:20px;"><h2 class="stitle">Identity Verification</h2><p style="font-size:13px;color:var(--muted);margin-top:3px;">Complete KYC to unlock full trading access</p></div>
-      <div class="g4" style="margin-bottom:20px;">
-        <div class="card" style="padding:18px;text-align:center;"><div style="width:42px;height:42px;border-radius:11px;background:var(--rdim);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;"><i class="fa-solid fa-user" style="color:var(--red);"></i></div><div style="font-weight:700;font-size:13px;margin-bottom:4px;">Basic Info</div><div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Name, email, DOB</div><span class="tag-a">✓ Complete</span></div>
-        <div class="card" style="padding:18px;text-align:center;"><div style="width:42px;height:42px;border-radius:11px;background:var(--adim);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;"><i class="fa-solid fa-id-card" style="color:var(--amber);"></i></div><div style="font-weight:700;font-size:13px;margin-bottom:4px;">Photo ID</div><div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Passport or national ID</div><span class="tag-p">Pending Upload</span></div>
-        <div class="card" style="padding:18px;text-align:center;"><div style="width:42px;height:42px;border-radius:11px;background:var(--pdim);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;"><i class="fa-solid fa-file-invoice" style="color:var(--purple);"></i></div><div style="font-weight:700;font-size:13px;margin-bottom:4px;">Address Proof</div><div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Utility bill or statement</div><span class="tag-p">Pending Upload</span></div>
-        <div class="card" style="padding:18px;text-align:center;"><div style="width:42px;height:42px;border-radius:11px;background:var(--gdim);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;"><i class="fa-solid fa-circle-check" style="color:var(--green);"></i></div><div style="font-weight:700;font-size:13px;margin-bottom:4px;">Final Review</div><div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Admin verification</div><span class="tag-p">Awaiting Docs</span></div>
-      </div>
-      <div class="card" style="padding:22px;max-width:500px;">
-        <div style="font-weight:700;font-size:13.5px;margin-bottom:16px;">Upload Document</div>
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <div><label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);margin-bottom:6px;">Document Type</label><select class="inp"><option>Select type</option><option>Passport</option><option>National ID Card</option><option>Driving Licence</option><option>Utility Bill</option><option>Bank Statement</option></select></div>
-          <div class="dropzone" onclick="this.querySelector('input').click()"><input type="file" accept="image/*,.pdf" style="display:none;" onchange="handleUp(this)"><i class="fa-solid fa-cloud-arrow-up" style="font-size:30px;color:rgba(255,255,255,.18);display:block;margin-bottom:10px;"></i><div style="font-size:13.5px;font-weight:600;color:rgba(255,255,255,.4);margin-bottom:3px;">Click to upload or drag &amp; drop</div><div style="font-size:11.5px;color:rgba(255,255,255,.2);">JPG, PNG or PDF · Max 10MB</div></div>
-          <button class="btn btn-r" style="width:100%;padding:12px;"><i class="fa-solid fa-upload" style="font-size:11px;"></i>Submit for Review</button>
-        </div>
-      </div>
-    </div>
+
 
     <!-- ======== SECURITY ======== -->
     <div class="sec" id="sec-security">
@@ -677,7 +652,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
     <div class="sec" id="sec-notifications">
       <div style="margin-bottom:20px;"><h2 class="stitle">Notifications</h2><p style="font-size:13px;color:var(--muted);margin-top:3px;">System messages and alerts</p></div>
       <div style="max-width:600px;display:flex;flex-direction:column;gap:10px;">
-        <div class="card" style="padding:14px 16px;border-color:rgba(229,38,28,.2);background:rgba(229,38,28,.03);"><div style="display:flex;gap:11px;align-items:flex-start;"><div style="width:34px;height:34px;border-radius:10px;background:var(--rdim);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa-solid fa-circle-info" style="color:var(--red);font-size:12px;"></i></div><div><div style="font-size:13.5px;font-weight:700;margin-bottom:3px;">Account Created Successfully</div><div style="font-size:12.5px;color:rgba(255,255,255,.4);">Welcome to Vortex Markets! Complete verification to unlock full access.</div><div style="font-size:11px;color:var(--dim);margin-top:5px;">Just now</div></div></div></div>
+        <div class="card" style="padding:14px 16px;border-color:rgba(229,38,28,.2);background:rgba(229,38,28,.03);"><div style="display:flex;gap:11px;align-items:flex-start;"><div style="width:34px;height:34px;border-radius:10px;background:var(--rdim);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa-solid fa-circle-info" style="color:var(--red);font-size:12px;"></i></div><div><div style="font-size:13.5px;font-weight:700;margin-bottom:3px;">Account Created Successfully</div><div style="font-size:12.5px;color:rgba(255,255,255,.4);">Welcome to Riftvol Markets! Complete verification to unlock full access.</div><div style="font-size:11px;color:var(--dim);margin-top:5px;">Just now</div></div></div></div>
         <div class="card" style="padding:14px 16px;border-color:rgba(245,158,11,.2);background:rgba(245,158,11,.03);"><div style="display:flex;gap:11px;align-items:flex-start;"><div style="width:34px;height:34px;border-radius:10px;background:var(--adim);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="fa-solid fa-triangle-exclamation" style="color:var(--amber);font-size:12px;"></i></div><div><div style="font-size:13.5px;font-weight:700;margin-bottom:3px;">Verification Required</div><div style="font-size:12.5px;color:rgba(255,255,255,.4);">Upload your identity documents to access full trading features.</div><div style="font-size:11px;color:var(--dim);margin-top:5px;">Today</div></div></div></div>
         <div id="txnNotifs"></div>
       </div>
@@ -714,7 +689,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
 <div id="toast"><div class="toast-in"><i class="fa-solid" id="tIc" style="font-size:14px;flex-shrink:0;margin-top:1px;"></i><span id="tMsg" style="font-size:13px;font-weight:500;color:#fff;"></span></div></div>
 <script>
 /* =====================================================
-   VORTEX MARKETS — USER DASHBOARD
+   Riftvol MARKETS — USER DASHBOARD
    Live prices: CoinGecko + Frankfurter APIs (free, no key)
    Firebase: Real-time transaction listener
    ===================================================== */
@@ -1297,7 +1272,6 @@ async function submitWd(){
   const pin=qi('wPin')?.value||'';
   if(amt<10){ showToast('Minimum withdrawal is $10','warn'); return; }
   if(!pin||pin.length<4){ showToast('Please enter your withdrawal PIN','warn'); return; }
-  if(RECORD&&RECORD.account?.withdrawalPin&&RECORD.account.withdrawalPin!==pin){ showToast('Incorrect withdrawal PIN. Please try again.','error'); return; }
 
   let detail='';
   if(curWM==='bank'){
@@ -1378,7 +1352,6 @@ async function changePin(){
   if(!cur||!nw||!cf){ showToast('Please fill all fields','warn'); return; }
   if(nw!==cf){ showToast('PINs do not match','error'); return; }
   if(!/^\d{4,6}$/.test(nw)){ showToast('PIN must be 4–6 digits','warn'); return; }
-  if(RECORD&&RECORD.account?.withdrawalPin&&RECORD.account.withdrawalPin!==cur){ showToast('Current PIN is incorrect','error'); return; }
   if(window.FB&&SESSION.recordKey) await window.FB.update(window.FB.ref(window.FB.db,'registrations/'+SESSION.recordKey+'/account'),{withdrawalPin:nw});
   if(RECORD) RECORD.account.withdrawalPin=nw;
   showToast('Withdrawal PIN updated!','ok');
@@ -1410,7 +1383,7 @@ function copyTxt(txt){
     .then(()=>showToast('Copied to clipboard!','ok'))
     .catch(()=>{ try{ const el=document.createElement('textarea'); el.value=txt; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); showToast('Copied!','ok'); }catch(e){} });
 }
-function handleUp(inp){ if(inp.files[0]) showToast('File "'+inp.files[0].name+'" ready to upload','ok'); }
+function handleUp(inp){ /* KYC upload removed */ }
 function doLogout(){ sessionStorage.removeItem('vxSession'); location.href='login.html'; }
 function ir(k,v){ return `<div class="ir"><span class="ik">${k}</span><span class="iv">${v||'—'}</span></div>`; }
 function fmt(n){ return Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
