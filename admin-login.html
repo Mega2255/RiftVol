@@ -9,7 +9,7 @@
 <script type="module">
   import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import{getDatabase,ref,get,set}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-  const cfg={apiKey:"AIzaSyB_U4P9bk4ePgIwpM1hVJwOL8F1Go032VA",authDomain:"Riftvol-broker.firebaseapp.com",databaseURL:"https://Riftvol-broker-default-rtdb.firebaseio.com",projectId:"Riftvol-broker",storageBucket:"Riftvol-broker.firebasestorage.app",messagingSenderId:"485590909637",appId:"1:485590909637:web:b5bd6a98ffbbad1fc7e6"};
+  const cfg={apiKey:"AIzaSyB_U4P9bk4ePgIwpM1hVJwOL8F1Go032VA",authDomain:"vortex-broker.firebaseapp.com",databaseURL:"https://vortex-broker-default-rtdb.firebaseio.com",projectId:"vortex-broker",storageBucket:"vortex-broker.firebasestorage.app",messagingSenderId:"485590909637",appId:"1:485590909637:web:b5bd6a98ffbbad1fc7e6ac"};
   const app=initializeApp(cfg),db=getDatabase(app);
   window.FB={db,ref,get,set};
 </script>
@@ -275,6 +275,14 @@ function waitForFB(){
   });
 }
 
+/* ── HIDE PRELOADER (always called, no matter what) ── */
+function hidePreloader(){
+  const pl=document.getElementById('preloader');
+  if(!pl) return;
+  pl.classList.add('out');
+  setTimeout(()=>{ if(pl.parentNode) pl.remove(); },600);
+}
+
 /* ── INIT ── */
 window.addEventListener('load', async ()=>{
   await waitForFB();
@@ -284,21 +292,21 @@ window.addEventListener('load', async ()=>{
     location.replace('admin.html'); return;
   }
 
-  // Check if credentials exist yet (to show first-time setup notice)
+  // FIX: preloader is always hidden regardless of Firebase success or failure
   try{
     const snap = await window.FB.get(window.FB.ref(window.FB.db,'platformSettings/adminCredentials'));
     if(!snap.exists()){
       document.getElementById('setupBox').classList.add('show');
     }
-  }catch(e){ /* silently ignore — will handle on login attempt */ }
-
-  // Hide preloader
-  const pl=document.getElementById('preloader');
-  pl.classList.add('out');
-  setTimeout(()=>pl.remove(),600);
-
-  // Focus username field
-  setTimeout(()=>document.getElementById('adminUser').focus(),400);
+  }catch(e){
+    // Firebase check failed — show a non-blocking warning but still proceed
+    console.warn('Firebase connectivity check failed:', e.message);
+    showErr('Could not reach Firebase. Check your internet connection and try again.');
+  } finally {
+    // FIX: always dismiss the preloader — moved outside try/catch
+    hidePreloader();
+    setTimeout(()=>document.getElementById('adminUser').focus(),400);
+  }
 });
 
 /* ── LOGIN ── */
