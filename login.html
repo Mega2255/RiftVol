@@ -14,7 +14,6 @@
   import { getDatabase, ref, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
   import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  // ── REPLACE WITH YOUR FIREBASE CREDENTIALS ──
   const firebaseConfig = {
   apiKey: "AIzaSyB_U4P9bk4ePgIwpM1hVJwOL8F1Go032VA",
   authDomain: "vortex-broker.firebaseapp.com",
@@ -409,6 +408,13 @@ tailwind.config = {
 
 // ════ HELPERS ════
 const g=id=>document.getElementById(id);
+
+// ════ SHA-256 ════
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
 function liveCheck(el,type){
   const v=el.value.trim();
   let ok=type==='pass'?v.length>=6:v.length>=2;
@@ -442,6 +448,9 @@ async function doLogin(){
   else g('err-loginId').classList.add('hidden');
   if(!loginPass){g('err-loginPass').classList.remove('hidden');return;}
   else g('err-loginPass').classList.add('hidden');
+
+  // Hash the password — for new accounts registered after the fix
+  const hashedPass = await sha256(loginPass);
 
   // Show loading
   const btn=g('loginBtn');
@@ -479,17 +488,19 @@ async function doLogin(){
         }catch(qErr){ snap=null; }
       }
 
-      // ── Step 3: fallback — full scan (works even without .indexOn) ──
+      // ── Step 3: fallback — full scan ──
       if(!snap||!snap.exists()){
         try{
           const allSnap=await window._vxGet(window._vxRef(db,'registrations'));
           if(allSnap.exists()){
             allSnap.forEach(child=>{
-              if(userData) return; // already found
+              if(userData) return;
               const d=child.val();
               const matchUser=d.account?.username?.toLowerCase()===loginId.toLowerCase();
               const matchEmail=d.contact?.email?.toLowerCase()===loginId.toLowerCase();
-              if((matchUser||matchEmail) && d.account?.password===loginPass){
+              // ── Accepts both plain text (old accounts) and hashed (new accounts) ──
+              const passMatch=d.account?.password===hashedPass||d.account?.password===loginPass;
+              if((matchUser||matchEmail) && passMatch){
                 userData=d; recordKey=child.key;
               }
             });
@@ -497,12 +508,14 @@ async function doLogin(){
         }catch(scanErr){ console.warn('Full scan failed:',scanErr.message); }
       }
 
-      // ── Check indexed query result (if fallback didn't already find user) ──
+      // ── Check indexed query result ──
       if(!userData && snap && snap.exists()){
         snap.forEach(child=>{
           if(userData) return;
           const d=child.val();
-          if(d.account && d.account.password===loginPass){
+          // ── Accepts both plain text (old accounts) and hashed (new accounts) ──
+          const passMatch=d.account?.password===hashedPass||d.account?.password===loginPass;
+          if(d.account && passMatch){
             userData=d; recordKey=child.key;
           }
         });
@@ -567,8 +580,6 @@ async function sendReset(){
     ra.querySelector('i').className='fa-solid fa-circle-check text-sm flex-shrink-0';
     g('forgotEmail').value='';
   }catch(err){
-    // Firebase returns auth/user-not-found for unknown emails.
-    // We show a neutral message either way to avoid email enumeration.
     if(err.code==='auth/user-not-found'||err.code==='auth/invalid-email'){
       rm.textContent='If this email is registered, a reset link will be sent shortly.';
       ra.className='alert-box mt-4 ok';
