@@ -12,29 +12,30 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getDatabase, ref, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-  import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
-  apiKey: "AIzaSyB_U4P9bk4ePgIwpM1hVJwOL8F1Go032VA",
-  authDomain: "vortex-broker.firebaseapp.com",
-  databaseURL: "https://vortex-broker-default-rtdb.firebaseio.com",
-  projectId: "vortex-broker",
-  storageBucket: "vortex-broker.firebasestorage.app",
-  messagingSenderId: "485590909637",
-  appId: "1:485590909637:web:b5bd6a98ffbbad1fc7e6ac"
-};
+    apiKey: "AIzaSyB_U4P9bk4ePgIwpM1hVJwOL8F1Go032VA",
+    authDomain: "vortex-broker.firebaseapp.com",
+    databaseURL: "https://vortex-broker-default-rtdb.firebaseio.com",
+    projectId: "vortex-broker",
+    storageBucket: "vortex-broker.firebasestorage.app",
+    messagingSenderId: "485590909637",
+    appId: "1:485590909637:web:b5bd6a98ffbbad1fc7e6ac"
+  };
 
   const app = initializeApp(firebaseConfig);
   const db  = getDatabase(app);
   const auth = getAuth(app);
-  window._vxDB    = db;
-  window._vxRef   = ref;
-  window._vxQuery = query;
-  window._vxOrderBy = orderByChild;
-  window._vxEqualTo = equalTo;
-  window._vxGet   = get;
-  window._vxAuth  = auth;
-  window._vxSendReset = sendPasswordResetEmail;
+  window._vxDB         = db;
+  window._vxRef        = ref;
+  window._vxQuery      = query;
+  window._vxOrderBy    = orderByChild;
+  window._vxEqualTo    = equalTo;
+  window._vxGet        = get;
+  window._vxAuth       = auth;
+  window._vxSendReset  = sendPasswordResetEmail;
+  window._vxSignIn     = signInWithEmailAndPassword;
 </script>
 
 <script>
@@ -174,13 +175,11 @@ tailwind.config = {
 
   <!-- LEFT PANEL — desktop only -->
   <div class="left-panel hidden lg:flex flex-col justify-between w-[48%] xl:w-[52%] p-10 xl:p-14">
-    <!-- Top -->
     <div>
       <a href="index.html" class="font-display font-bold text-2xl text-vx-red tracking-tight block mb-2">Riftvol</a>
       <p class="text-white/30 text-sm">World Leader in Online Trading</p>
     </div>
 
-    <!-- Centre content -->
     <div class="anim-in d2">
       <div class="mb-8">
         <div class="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-full px-4 py-1.5 text-xs font-semibold text-red-400/80 mb-6 tracking-wider uppercase">
@@ -229,7 +228,6 @@ tailwind.config = {
       </div>
     </div>
 
-    <!-- Bottom -->
     <div class="flex items-center gap-4 text-xs text-white/20">
       <a href="index.html" class="hover:text-white/50 transition-colors">Home</a>
       <span>·</span>
@@ -449,8 +447,8 @@ async function doLogin(){
   if(!loginPass){g('err-loginPass').classList.remove('hidden');return;}
   else g('err-loginPass').classList.add('hidden');
 
-  // Hash the password — for new accounts registered after the fix
-  const hashedPass = await sha256(loginPass);
+  // Hash the password for new accounts
+  const hashedPass=await sha256(loginPass);
 
   // Show loading
   const btn=g('loginBtn');
@@ -488,7 +486,7 @@ async function doLogin(){
         }catch(qErr){ snap=null; }
       }
 
-      // ── Step 3: fallback — full scan ──
+      // ── Step 3: fallback full scan ──
       if(!snap||!snap.exists()){
         try{
           const allSnap=await window._vxGet(window._vxRef(db,'registrations'));
@@ -498,7 +496,7 @@ async function doLogin(){
               const d=child.val();
               const matchUser=d.account?.username?.toLowerCase()===loginId.toLowerCase();
               const matchEmail=d.contact?.email?.toLowerCase()===loginId.toLowerCase();
-              // ── Accepts both plain text (old accounts) and hashed (new accounts) ──
+              // handles old plain text accounts AND new hashed accounts
               const passMatch=d.account?.password===hashedPass||d.account?.password===loginPass;
               if((matchUser||matchEmail) && passMatch){
                 userData=d; recordKey=child.key;
@@ -508,17 +506,45 @@ async function doLogin(){
         }catch(scanErr){ console.warn('Full scan failed:',scanErr.message); }
       }
 
-      // ── Check indexed query result ──
+      // ── Step 4: check indexed query result ──
       if(!userData && snap && snap.exists()){
         snap.forEach(child=>{
           if(userData) return;
           const d=child.val();
-          // ── Accepts both plain text (old accounts) and hashed (new accounts) ──
+          // handles old plain text accounts AND new hashed accounts
           const passMatch=d.account?.password===hashedPass||d.account?.password===loginPass;
           if(d.account && passMatch){
             userData=d; recordKey=child.key;
           }
         });
+      }
+
+      // ── Step 5: Firebase Auth fallback for users who did a password reset ──
+      if(!userData && window._vxAuth && window._vxSignIn){
+        try{
+          // First find their record by username or email to get their email address
+          let foundRecord=null; let foundKey=null;
+          const allSnap=await window._vxGet(window._vxRef(db,'registrations'));
+          if(allSnap.exists()){
+            allSnap.forEach(child=>{
+              if(foundRecord) return;
+              const d=child.val();
+              const matchUser=d.account?.username?.toLowerCase()===loginId.toLowerCase();
+              const matchEmail=d.contact?.email?.toLowerCase()===loginId.toLowerCase();
+              if(matchUser||matchEmail){ foundRecord=d; foundKey=child.key; }
+            });
+          }
+          if(foundRecord){
+            const email=foundRecord.contact?.email;
+            if(email){
+              // Try Firebase Auth — succeeds if they reset their password via the link
+              await window._vxSignIn(window._vxAuth, email, loginPass);
+              userData=foundRecord; recordKey=foundKey;
+            }
+          }
+        }catch(authErr){
+          console.warn('Firebase Auth fallback failed:',authErr.code);
+        }
       }
     }
 
