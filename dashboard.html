@@ -826,6 +826,7 @@ async function loadFirebase(){
     return;
   }
 
+  // ── Step 1: Resolve recordKey FIRST, before attaching any listeners ──
   let recordKey = SESSION?.recordKey;
 
   if(!recordKey && (SESSION.email || SESSION.username)){
@@ -842,7 +843,9 @@ async function loadFirebase(){
           if(emailMatch || userMatch){
             recordKey = child.key;
             SESSION.recordKey = recordKey;
+            // Persist so next load skips the loop
             sessionStorage.setItem('vxSession', JSON.stringify(SESSION));
+            try{ localStorage.setItem('vxRemember', JSON.stringify(SESSION)); }catch(e){}
           }
         });
       }
@@ -854,24 +857,26 @@ async function loadFirebase(){
     return;
   }
 
-  /* ── Load profile & enforce suspension on initial load ── */
+  // ── Step 2: Load profile and enforce suspension BEFORE anything else ──
   try{
     const snap = await window.FB.get(window.FB.ref(window.FB.db, 'registrations/' + recordKey));
     if(snap.exists()){
       RECORD = snap.val();
       populateProfile(RECORD);
-      /* Check suspension status immediately on load */
-      enforceSuspension(RECORD.status || 'active');
+      enforceSuspension(RECORD.status || 'active'); // ← immediate check on load
     }
   } catch(e){ console.warn("Profile load failed", e); }
 
-  /* ── Real-time status listener — locks screen the moment admin suspends ── */
-  window.FB.onValue(window.FB.ref(window.FB.db, 'registrations/' + recordKey + '/status'), (snap) => {
-    const status = snap.val() || 'active';
-    enforceSuspension(status);
-  });
+  // ── Step 3: Attach status listener NOW that recordKey is confirmed ──
+  window.FB.onValue(
+    window.FB.ref(window.FB.db, 'registrations/' + recordKey + '/status'),
+    (snap) => {
+      const status = snap.val() || 'active';
+      enforceSuspension(status); // fires instantly whenever admin changes status
+    }
+  );
 
-  /* ── Real-time transactions listener ── */
+  // ── Step 4: Attach transactions listener ──
   window.FB.onValue(window.FB.ref(window.FB.db, 'transactions/' + recordKey), (snapshot) => {
     ALL_TXN = [];
     if(snapshot.exists()){
