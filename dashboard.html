@@ -37,6 +37,10 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
 .pl-sub{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* SUSPENDED SCREEN */
+#suspendedScreen{display:none;position:fixed;inset:0;z-index:9998;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+#suspendedScreen.show{display:flex;}
+
 /* SIDEBAR */
 .sidebar{position:fixed;top:0;left:0;bottom:0;width:228px;background:var(--sb);border-right:1px solid var(--bd);display:flex;flex-direction:column;z-index:300;transition:transform .3s cubic-bezier(.4,0,.2,1);}
 .sidebar.away{transform:translateX(-100%);}
@@ -225,6 +229,19 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
   <div class="pl-spin"></div>
   <div class="pl-logo"><b>Rift</b>Vol</div>
   <div class="pl-sub">Loading Dashboard</div>
+</div>
+
+<!-- SUSPENDED SCREEN -->
+<div id="suspendedScreen">
+  <div style="width:72px;height:72px;border-radius:50%;background:rgba(229,38,28,.12);border:1px solid rgba(229,38,28,.25);display:flex;align-items:center;justify-content:center;margin-bottom:22px;">
+    <i class="fa-solid fa-ban" style="color:var(--red);font-size:30px;"></i>
+  </div>
+  <div style="font-family:'Cabinet Grotesk',sans-serif;font-size:1.6rem;font-weight:900;margin-bottom:12px;">Account Suspended</div>
+  <p style="font-size:14px;color:rgba(255,255,255,.45);max-width:400px;line-height:1.75;margin-bottom:28px;">Your account has been temporarily suspended by our team. You cannot access the dashboard, make deposits, or submit withdrawals at this time.<br><br>Please contact our customer support team to resolve this and have your account reinstated.</p>
+  <a href="mailto:support@riftvol.com" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--red),var(--red2));color:#fff;text-decoration:none;padding:13px 26px;border-radius:10px;font-family:'Cabinet Grotesk',sans-serif;font-weight:700;font-size:14px;margin-bottom:12px;transition:all .2s;">
+    <i class="fa-solid fa-envelope" style="font-size:12px;"></i>Contact Support
+  </a>
+  <button onclick="doLogout()" style="background:transparent;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.4);padding:10px 22px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .2s;">Sign Out</button>
 </div>
 
 <!-- SIDEBAR OVERLAY -->
@@ -631,8 +648,6 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
       </div>
     </div>
 
-
-
     <!-- ======== SECURITY ======== -->
     <div class="sec" id="sec-security">
       <div style="margin-bottom:20px;"><h2 class="stitle">Security</h2><p style="font-size:13px;color:var(--muted);margin-top:3px;">Manage your account security</p></div>
@@ -687,24 +702,15 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Instrume
 
 <!-- TOAST -->
 <div id="toast"><div class="toast-in"><i class="fa-solid" id="tIc" style="font-size:14px;flex-shrink:0;margin-top:1px;"></i><span id="tMsg" style="font-size:13px;font-weight:500;color:#fff;"></span></div></div>
+
 <script>
 /* =====================================================
    Riftvol MARKETS — USER DASHBOARD
-   Live prices: CoinGecko + Frankfurter APIs (free, no key)
-   Firebase: Real-time transaction listener
    ===================================================== */
 
-/* ── PLATFORM BANK & WALLET DETAILS ── */
-/* Loaded live from Firebase: platformSettings/paymentDetails
-   Admin can update these in the admin dashboard → Payment Details section.
-   Changes reflect instantly for all users via onValue() listener. */
 let PLT = {};
-
-/* ── STATE ── */
 let SESSION=null, RECORD=null, ALL_TXN=[], curPM='bank', curWM='bank', curMktF='all', PRICES={};
 
-/* ── AUTH CHECK ── */
-/* ── DATA CONSTANTS — must all be before the IIFE that calls boot() ── */
 const WL_DEF=[{sym:'BTC/USD',key:'BTC'},{sym:'ETH/USD',key:'ETH'},{sym:'SOL/USD',key:'SOL'},{sym:'EUR/USD',key:'EURUSD'},{sym:'GBP/USD',key:'GBPUSD'},{sym:'USD/JPY',key:'USDJPY'}];
 const MKT_DEF=[
   {sym:'EUR/USD',key:'EURUSD',cat:'forex',sp:'0.8'},{sym:'GBP/USD',key:'GBPUSD',cat:'forex',sp:'0.9'},
@@ -721,6 +727,7 @@ const MKT_DEF=[
   {sym:'Oil WTI',px:'$71.20',chgStr:'-0.5%',up:false,cat:'commodities',sp:'0.04'},
 ];
 
+/* ── AUTH CHECK ── */
 (function(){
   const raw = sessionStorage.getItem('vxSession') || localStorage.getItem('vxRemember');
   if(!raw){ location.href='login.html'; return; }
@@ -734,44 +741,46 @@ async function boot(){
   buildWatchlist();
   buildMktTable('all');
   document.getElementById('topDate').textContent = new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
-
-  // Wait for Firebase to be ready
   await waitForFirebase();
-
   await loadPaymentDetails();
   await loadFirebase();
   fetchPrices();
   setInterval(fetchPrices, 30000);
-
-  // Remove preloader
-  setTimeout(()=>{ 
-    const l = qi('preloader'); 
-    l.classList.add('out'); 
-    setTimeout(()=>l.remove(), 600); 
+  setTimeout(()=>{
+    const l = qi('preloader');
+    l.classList.add('out');
+    setTimeout(()=>l.remove(), 600);
   }, 800);
 }
 
-// Helper to wait for Firebase
 function waitForFirebase(){
   return new Promise((resolve) => {
-    if (window.FB) {
-      resolve();
-      return;
-    }
+    if (window.FB){ resolve(); return; }
     const check = setInterval(() => {
-      if (window.FB) {
-        clearInterval(check);
-        resolve();
-      }
+      if (window.FB){ clearInterval(check); resolve(); }
     }, 50);
-
-    // Timeout after 5 seconds
-    setTimeout(() => {
-      clearInterval(check);
-      if (!window.FB) console.warn("Firebase still not loaded after 5s");
-      resolve();
-    }, 5000);
+    setTimeout(() => { clearInterval(check); resolve(); }, 5000);
   });
+}
+
+/* ══════════════════════════════════════════════════════
+   SUSPENSION ENFORCEMENT
+   Called on initial load and on every real-time status
+   change — so suspending mid-session locks instantly.
+══════════════════════════════════════════════════════ */
+function enforceSuspension(status){
+  const screen = qi('suspendedScreen');
+  const sidebar = qi('sb');
+  const main = qi('mainWrap');
+  if(status === 'suspended'){
+    screen.classList.add('show');
+    sidebar.style.pointerEvents = 'none';
+    main.style.pointerEvents = 'none';
+  } else {
+    screen.classList.remove('show');
+    sidebar.style.pointerEvents = '';
+    main.style.pointerEvents = '';
+  }
 }
 
 /* ── POPULATE UI FROM SESSION ── */
@@ -798,29 +807,27 @@ function buildAcctSummary(){
   qi('acctSum').innerHTML = rows.map(([k,v])=>ir(k,v)).join('');
 }
 
-/* ── PAYMENT DETAILS — live from Firebase ── */
+/* ── PAYMENT DETAILS ── */
 async function loadPaymentDetails(){
   if(!window.FB) return;
   try{
     window.FB.onValue(window.FB.ref(window.FB.db,'platformSettings/paymentDetails'), snap=>{
       PLT = snap.exists() ? snap.val() : {};
     });
-    // Also do one immediate get so PLT is populated before showDepIns() can be called
     const snap = await window.FB.get(window.FB.ref(window.FB.db,'platformSettings/paymentDetails'));
     if(snap.exists()) PLT = snap.val();
   }catch(ex){ console.warn('[PayDetails]',ex); }
 }
 
-/* ── FIREBASE LOAD + REAL-TIME LISTENER ── */
+/* ── FIREBASE LOAD + REAL-TIME LISTENERS ── */
 async function loadFirebase(){
-  if(!window.FB) {
+  if(!window.FB){
     showToast('Firebase is still loading... please refresh', 'warn');
     return;
   }
 
   let recordKey = SESSION?.recordKey;
 
-  // Fallback: find user if recordKey is missing
   if(!recordKey && (SESSION.email || SESSION.username)){
     try{
       const allSnap = await window.FB.get(window.FB.ref(window.FB.db, 'registrations'));
@@ -828,9 +835,9 @@ async function loadFirebase(){
         allSnap.forEach(child => {
           if(recordKey) return;
           const v = child.val();
-          const emailMatch = v.contact?.email && SESSION.email && 
+          const emailMatch = v.contact?.email && SESSION.email &&
                              v.contact.email.toLowerCase() === SESSION.email.toLowerCase();
-          const userMatch = v.account?.username && SESSION.username && 
+          const userMatch = v.account?.username && SESSION.username &&
                             v.account.username.toLowerCase() === SESSION.username.toLowerCase();
           if(emailMatch || userMatch){
             recordKey = child.key;
@@ -839,9 +846,7 @@ async function loadFirebase(){
           }
         });
       }
-    } catch(e){
-      console.warn("Could not find user record", e);
-    }
+    } catch(e){ console.warn("Could not find user record", e); }
   }
 
   if(!recordKey){
@@ -849,16 +854,24 @@ async function loadFirebase(){
     return;
   }
 
-  // Load profile
+  /* ── Load profile & enforce suspension on initial load ── */
   try{
     const snap = await window.FB.get(window.FB.ref(window.FB.db, 'registrations/' + recordKey));
     if(snap.exists()){
       RECORD = snap.val();
       populateProfile(RECORD);
+      /* Check suspension status immediately on load */
+      enforceSuspension(RECORD.status || 'active');
     }
   } catch(e){ console.warn("Profile load failed", e); }
 
-  // Real-time transactions listener
+  /* ── Real-time status listener — locks screen the moment admin suspends ── */
+  window.FB.onValue(window.FB.ref(window.FB.db, 'registrations/' + recordKey + '/status'), (snap) => {
+    const status = snap.val() || 'active';
+    enforceSuspension(status);
+  });
+
+  /* ── Real-time transactions listener ── */
   window.FB.onValue(window.FB.ref(window.FB.db, 'transactions/' + recordKey), (snapshot) => {
     ALL_TXN = [];
     if(snapshot.exists()){
@@ -867,7 +880,6 @@ async function loadFirebase(){
       });
     }
     ALL_TXN.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-
     computeStats();
     renderRecent();
     renderHistory('all');
@@ -951,7 +963,6 @@ function renderHistory(filter){
     const amtC=isDep?'var(--green)':'#f87171';
     const sign=isDep?'+':'-';
     const dt=t.createdAt?new Date(t.createdAt).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
-    // Human-readable label — admin-funded deposits show as "Funds Received"
     const label=t.type==='profit'?'Profit / Return':t.type==='bonus'?'Bonus Credit':(t.adminFunded&&t.type==='deposit')?'Funds Received':t.type.charAt(0).toUpperCase()+t.type.slice(1);
     const detail=t.adminNote||t.detail||'—';
     return `<div class="tr" style="grid-template-columns:36px 1fr 1fr 110px 90px;padding:9px 14px;">
@@ -981,12 +992,9 @@ function renderTxnNotifs(){
   }).join('');
 }
 
-/* =====================================================
-   LIVE PRICES — CoinGecko + Frankfurter (FREE, no key)
-   ===================================================== */
+/* ── LIVE PRICES ── */
 async function fetchPrices(){
   try{
-    // 1. CRYPTO — CoinGecko free API
     const cgRes = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,binancecoin&vs_currencies=usd&include_24hr_change=true');
     if(cgRes.ok){
       const cg = await cgRes.json();
@@ -995,12 +1003,10 @@ async function fetchPrices(){
       if(cg.solana)     PRICES.SOL = {price:cg.solana.usd,        chg:cg.solana.usd_24h_change||0};
       if(cg.binancecoin)PRICES.BNB = {price:cg.binancecoin.usd,   chg:cg.binancecoin.usd_24h_change||0};
     }
-    // 2. FOREX — Frankfurter free API
     const fxRes = await fetch('https://api.frankfurter.app/latest?from=USD&to=EUR,GBP,JPY,AUD,CHF,CAD');
     if(fxRes.ok){
       const fx = await fxRes.json();
       if(fx.rates){
-        // Convert to standard pairs
         if(fx.rates.EUR) PRICES.EURUSD = {price:+(1/fx.rates.EUR).toFixed(5), chg:+(Math.random()*0.3-0.15).toFixed(3)};
         if(fx.rates.GBP) PRICES.GBPUSD = {price:+(1/fx.rates.GBP).toFixed(5), chg:+(Math.random()*0.3-0.15).toFixed(3)};
         if(fx.rates.JPY) PRICES.USDJPY = {price:+fx.rates.JPY.toFixed(3),      chg:+(Math.random()*0.3-0.15).toFixed(3)};
@@ -1024,7 +1030,6 @@ function updateAllPriceDisplays(){
   updateTicker();
   buildWatchlist();
   if(qi('sec-markets').classList.contains('on')) buildMktTable(curMktF);
-  // Update chart header with live BTC price
   const btc=PRICES['BTC'];
   if(btc){
     qi('cPx').textContent='$'+btc.price.toLocaleString('en-US',{maximumFractionDigits:2});
@@ -1043,7 +1048,7 @@ function updateTicker(){
     {sym:'USD/JPY',key:'USDJPY'},{sym:'AUD/USD',key:'AUDUSD'},
     {sym:'Gold',px:'$3,021',up:true,chgStr:'0.8'},{sym:'S&P 500',px:'5,843',up:true,chgStr:'0.3'},{sym:'Oil WTI',px:'$71.20',up:false,chgStr:'0.5'}
   ];
-  const all=[...items,...items]; // duplicate for seamless loop
+  const all=[...items,...items];
   const el=qi('tickEl'); if(!el)return;
   el.innerHTML=all.map(i=>{
     if(i.px) return `<div class="t-item"><span style="color:var(--dim);">${i.sym}</span><span style="font-weight:600;">${i.px}</span><span class="${i.up?'up':'dn'}">${i.up?'▲':'▼'}${i.chgStr}%</span></div>`;
@@ -1071,7 +1076,6 @@ function buildWatchlist(){
 }
 
 /* ── MARKETS TABLE ── */
-
 function buildMktTable(cat){
   curMktF=cat;
   const el=qi('mktEl'); if(!el)return;
@@ -1142,9 +1146,7 @@ function setPer(btn){
   drawChart();
 }
 
-/* =====================================================
-   DEPOSIT FLOW
-   ===================================================== */
+/* ── DEPOSIT FLOW ── */
 function selPM(btn, method){
   curPM=method;
   document.querySelectorAll('.pm').forEach(c=>{ c.classList.remove('sel'); const i=c.querySelector('i'); if(i) i.style.color='var(--muted)'; });
@@ -1165,8 +1167,6 @@ function showDepIns(){
   if(curPM==='bank'){
     qi('instBank').style.display='block';
     qi('instCrypto').style.display='none';
-    // Build bank details rows
-    // Filter out empty fields so we only show what the admin has configured
     const allRows=[
       ['Bank Name',PLT.bankName],['Account Name',PLT.accName],['Account Number',PLT.accNum],
       ['Sort Code',PLT.sortCode],['IBAN',PLT.iban],['SWIFT / BIC',PLT.swift],
@@ -1225,19 +1225,17 @@ async function confirmDep(type){
   showToast('Deposit submitted! Awaiting admin confirmation.','ok');
 }
 
-/* ── QR CODE GENERATOR (canvas-based, no library) ── */
+/* ── QR CODE ── */
 function drawQR(addr){
   const cv=qi('qrCanvas'); if(!cv)return;
   const S=130, ctx=cv.getContext('2d');
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,S,S);
-  // Generate visual pattern from address chars
   const cell=5, cols=Math.floor(S/cell);
   ctx.fillStyle='#111';
   for(let r=0;r<cols;r++) for(let c=0;c<cols;c++){
     const seed=(addr.charCodeAt((r*cols+c)%addr.length)||0)+(r*7+c*13)%17;
     if(seed%3===0) ctx.fillRect(c*cell,r*cell,cell,cell);
   }
-  // Finder squares (corners — standard QR look)
   [[0,0],[0,cols-7],[cols-7,0]].forEach(([r,c])=>{
     ctx.fillStyle='#111'; ctx.fillRect(c*cell,r*cell,7*cell,7*cell);
     ctx.fillStyle='#fff'; ctx.fillRect(c*cell+cell,r*cell+cell,5*cell,5*cell);
@@ -1245,9 +1243,7 @@ function drawQR(addr){
   });
 }
 
-/* =====================================================
-   WITHDRAWAL FLOW
-   ===================================================== */
+/* ── WITHDRAWAL FLOW ── */
 function selWM(method){
   curWM=method;
   const bk=qi('wmBank'), cr=qi('wmCrypto');
@@ -1272,7 +1268,6 @@ async function submitWd(){
   const pin=qi('wPin')?.value||'';
   if(amt<10){ showToast('Minimum withdrawal is $10','warn'); return; }
   if(!pin||pin.length<4){ showToast('Please enter your withdrawal PIN','warn'); return; }
-
   let detail='';
   if(curWM==='bank'){
     const an=qi('wAccName')?.value.trim();
@@ -1286,12 +1281,10 @@ async function submitWd(){
     if(!wallet){ showToast('Please enter your wallet address','warn'); return; }
     detail=`Crypto Withdrawal | ${coin} | ${wallet}`;
   }
-
   const btn=qi('wSubBtn');
   btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-circle-notch fa-spin"></i> Submitting…';
   await saveTxn('withdrawal',amt,detail);
   btn.disabled=false; btn.innerHTML='<i class="fa-solid fa-paper-plane" style="font-size:12px;"></i>Submit Withdrawal Request';
-  // Clear fields
   ['wAmt','wPin','wAccName','wBankName','wAccNum','wSortIban','wBankCountry','wWallet'].forEach(id=>{ const e=qi(id); if(e) e.value=''; });
   showToast('Withdrawal submitted! Pending admin approval.','ok');
   go('history');
@@ -1299,35 +1292,28 @@ async function submitWd(){
 
 /* ── SAVE TRANSACTION ── */
 async function saveTxn(type, amount, detail){
-  if(!window.FB || !SESSION.recordKey) {
+  if(!window.FB || !SESSION.recordKey){
     showToast('Session error – please refresh','error');
     return;
   }
-
   try{
     const txn = {
-      type, 
-      amount, 
-      detail,
+      type, amount, detail,
       status: 'pending',
       createdAt: new Date().toISOString(),
       userKey: SESSION.recordKey,
       username: SESSION.username || '',
       email: SESSION.email || ''
     };
-
     const ref = await window.FB.push(
-      window.FB.ref(window.FB.db, 'transactions/'+SESSION.recordKey), 
+      window.FB.ref(window.FB.db, 'transactions/'+SESSION.recordKey),
       txn
     );
-
-    // Instantly add to local array so UI updates immediately
     ALL_TXN.unshift({id: ref.key, ...txn});
     computeStats();
     renderRecent();
     renderHistory('all');
     renderTxnNotifs();
-
   }catch(e){
     console.error(e);
     showToast('Failed to save transaction','error');
@@ -1365,7 +1351,6 @@ function go(name){
   document.querySelectorAll('.ni[data-s]').forEach(a=>a.classList.toggle('on',a.dataset.s===name));
   closeSB();
   window.scrollTo({top:0,behavior:'smooth'});
-  // Reset deposit on revisit
   if(name==='deposit'){
     if(qi('depStep1')) qi('depStep1').style.display='block';
     if(qi('depStep2')) qi('depStep2').style.display='none';
@@ -1383,7 +1368,6 @@ function copyTxt(txt){
     .then(()=>showToast('Copied to clipboard!','ok'))
     .catch(()=>{ try{ const el=document.createElement('textarea'); el.value=txt; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); showToast('Copied!','ok'); }catch(e){} });
 }
-function handleUp(inp){ /* KYC upload removed */ }
 function doLogout(){ sessionStorage.removeItem('vxSession'); location.href='login.html'; }
 function ir(k,v){ return `<div class="ir"><span class="ik">${k}</span><span class="iv">${v||'—'}</span></div>`; }
 function fmt(n){ return Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
@@ -1399,7 +1383,6 @@ function showToast(msg,type='ok'){
   el._t=setTimeout(()=>el.classList.remove('show'),4500);
 }
 
-/* ── RESIZE ── */
 let _rt;
 window.addEventListener('resize',()=>{ clearTimeout(_rt); _rt=setTimeout(drawChart,200); });
 </script>
@@ -1410,10 +1393,8 @@ window.addEventListener('resize',()=>{ clearTimeout(_rt); _rt=setTimeout(drawCha
 w.chaportConfig = {
   appId : '69c36ae0fd99896b215a9a73',
 };
-
 if(w.chaport)return;v3=w.chaport={};v3._q=[];v3._l={};v3.q=function(){v3._q.push(arguments)};v3.on=function(e,fn){if(!v3._l[e])v3._l[e]=[];v3._l[e].push(fn)};var s=d.createElement('script');s.type='text/javascript';s.async=true;s.src='https://app.chaport.com/javascripts/insert.js';var ss=d.getElementsByTagName('script')[0];ss.parentNode.insertBefore(s,ss)})(window, document);
 </script>
-<!-- End of Chaport Live Chat code -->
 
 </body>
 </html>
